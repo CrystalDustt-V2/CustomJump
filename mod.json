@@ -1,0 +1,29 @@
+{
+	"geode": "5.0.0-beta.2",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "crystaldust.customjump",
+	"name": "CustomJump",
+	"version": "v1.0.0",
+	"developer": "CrystalDust",
+	"description": "Remap jump input to any keyboard key.",
+	"tags": [
+		"gameplay",
+		"offline",
+		"cheat",
+		"performance",
+		"customization"
+	],
+	"settings": {
+		"jump-key": {
+			"name": "Jump Key",
+			"type": "keybind",
+			"default": "Space",
+			"description": "Choose your preferred jump button."
+		}
+	}
+}
