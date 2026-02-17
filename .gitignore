@@ -54,6 +54,7 @@ build-*/
 .history/
 
 # clangd
+.clangd
 .cache/
 
 # Visual Studio
@@ -62,3 +63,6 @@ build-*/
 # CLion
 .idea/
 /cmake-build-*/
+
+# hehe
+deploy.txt

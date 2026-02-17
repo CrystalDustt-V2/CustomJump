@@ -26,3 +26,11 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
 # Set up dependencies, resources, and link Geode.
 setup_geode_mod(${PROJECT_NAME})
+
+# fmt emits a known deprecated-locale warning on newer Clang/libc++.
+# Keep CI output clean without muting warnings for this mod's own code.
+if (TARGET fmt)
+    target_compile_options(fmt PRIVATE
+        $<$<COMPILE_LANG_AND_ID:CXX,Clang,AppleClang>:-Wno-deprecated-declarations>
+    )
+endif()
