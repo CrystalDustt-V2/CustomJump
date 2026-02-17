@@ -1,3 +1,11 @@
+# v1.0.5
+- Added a separate custom jump keybind for Player 2 (`Jump Key (Player 2)`).
+- Added Player 2 custom jump input processing during active gameplay.
+- Kept default player inputs untouched while adding custom key support for both players.
+- Added `Enable Player 2 Custom Key` toggle setting.
+- Added runtime gating for Player 2 custom jump input based on the toggle.
+- Kept backward-compatible behavior by defaulting Player 2 custom input to enabled when the toggle setting is missing.
+
 # v1.0.4
 - Fixed custom jump hold behavior after death and respawn.
 - Improved jump key state handling so held inputs re-register correctly in gameplay.
