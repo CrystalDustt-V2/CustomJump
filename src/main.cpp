@@ -10,7 +10,6 @@
 using namespace geode::prelude;
 
 namespace customjump {
-// [Geode v5.0.0-beta.3 Migration]
 static constexpr char const* kJumpKeyP1Setting = "jump-key";
 static constexpr char const* kJumpKeyP2Setting = "jump-key-p2";
 static constexpr char const* kEnableJumpKeyP2Setting = "enable-jump-key-p2";
