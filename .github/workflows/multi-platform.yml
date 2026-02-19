@@ -61,13 +61,18 @@ jobs:
 
       - name: Resolve Release Tag
         id: release_tag
-        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
+        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release) || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         shell: bash
         env:
           INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" && "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "tag=main-build-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -85,5 +90,7 @@ jobs:
           files: ${{ steps.build.outputs.build-output }}/*.geode
           tag_name: ${{ steps.release_tag.outputs.tag }}
           name: ${{ steps.release_tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          prerelease: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           generate_release_notes: true
           fail_on_unmatched_files: true
