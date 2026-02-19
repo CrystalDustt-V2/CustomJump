@@ -1,14 +1,12 @@
 {
-	"geode": "5.0.0-beta.2",
+	"geode": "5.0.0-beta.3",
 	"gd": {
 		"win": "2.2081",
-		"android": "2.2081",
-		"mac": "2.2081",
-		"ios": "2.2081"
+		"mac": "2.2081"
 	},
 	"id": "crystaldust.customjump",
 	"name": "CustomJump",
-	"version": "v1.0.5",
+	"version": "v1.0.6",
 	"developer": "CrystalDust",
 	"description": "Remap jump input to any keyboard key.",
 	"tags": [
@@ -23,19 +21,29 @@
 			"name": "Jump Key",
 			"type": "keybind",
 			"default": "Space",
-			"description": "Choose your preferred jump button."
+			"description": "Choose your preferred jump button.",
+			"category": "universal",
+			"priority": 0
 		},
 		"jump-key-p2": {
 			"name": "Jump Key (Player 2)",
 			"type": "keybind",
 			"default": "I",
-			"description": "Choose your preferred jump button for Player 2."
+			"description": "Choose your preferred jump button for Player 2.",
+			"category": "universal",
+			"priority": 0
 		},
 		"enable-jump-key-p2": {
 			"name": "Enable Player 2 Custom Key",
 			"type": "bool",
 			"default": true,
 			"description": "Toggle custom jump key input for Player 2."
+		},
+		"stop-keybind-propagation": {
+			"name": "Stop Keybind Propagation",
+			"type": "bool",
+			"default": false,
+			"description": "If enabled, consume matched CustomJump keybind events before lower-priority listeners."
 		}
 	}
 }

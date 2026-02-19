@@ -27,6 +27,13 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 # Set up dependencies, resources, and link Geode.
 setup_geode_mod(${PROJECT_NAME})
 
+# [Geode v5.0.0-beta.3 Migration]
+# MSVC does not expose __builtin_memset by default, but current beta.3 event
+# templates instantiate std23::function paths that reference it.
+if (MSVC)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE __builtin_memset=memset)
+endif()
+
 # fmt emits a known deprecated-locale warning on newer Clang/libc++.
 # Keep CI output clean without muting warnings for this mod's own code.
 if (TARGET fmt)

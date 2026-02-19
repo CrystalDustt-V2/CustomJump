@@ -1,3 +1,12 @@
+# v1.0.6
+- Updated for Geode v5.0.0-beta.3.
+- Migrated to the beta.3 keybind category system (`category` + keybind `priority` metadata).
+- Implemented explicit keybind listener priority handling and optional stop-propagation behavior.
+- Improved input handling compatibility using keybind event timestamps and modifier-aware keybind matching.
+- Added custom jump support for `LevelEditorLayer` playtest sessions.
+- Added playtest-only context gating so editor tools and menus are not affected.
+- Kept default jump controls additive while custom keybinds are active.
+
 # v1.0.5
 - Added a separate custom jump keybind for Player 2 (`Jump Key (Player 2)`).
 - Added Player 2 custom jump input processing during active gameplay.

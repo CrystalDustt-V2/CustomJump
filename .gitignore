@@ -54,7 +54,7 @@ build-*/
 .history/
 
 # clangd
-.clangd
+/.clangd
 .cache/
 
 # Visual Studio
