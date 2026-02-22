@@ -1,3 +1,9 @@
+# v1.0.7
+- Updated for Geode v5.0.0-beta.4.
+- Updated metadata for beta.4 compatibility (`requires-patching`, full platform targets).
+- Revalidated keybind event handling for beta.4 event recursion/race-condition fixes.
+- Revalidated input stability in gameplay and editor playtest for both Player 1 and Player 2.
+
 # v1.0.6
 - Updated for Geode v5.0.0-beta.3.
 - Migrated to the beta.3 keybind category system (`category` + keybind `priority` metadata).
