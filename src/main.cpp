@@ -112,7 +112,7 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
       return false;
     }
 
-    // [Geode v5.0.0-beta.3 Migration]
+    // [Geode v5.0.0 Stable Migration]
     this->addEventListener(
         "customjump-p1-play",
         KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP1Setting),
@@ -134,7 +134,7 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
         },
         customjump::kKeybindListenerPriority);
 
-    // [Geode v5.0.0-beta.3 Migration]
+    // [Geode v5.0.0 Stable Migration]
     this->addEventListener(
         "customjump-p2-play",
         KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP2Setting),
@@ -248,7 +248,7 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
       return false;
     }
 
-    // [Geode v5.0.0-beta.3 Migration]
+    // [Geode v5.0.0 Stable Migration]
     this->addEventListener(
         "customjump-p1-editor",
         KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP1Setting),
@@ -270,7 +270,7 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
         },
         customjump::kKeybindListenerPriority);
 
-    // [Geode v5.0.0-beta.3 Migration]
+    // [Geode v5.0.0 Stable Migration]
     this->addEventListener(
         "customjump-p2-editor",
         KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP2Setting),

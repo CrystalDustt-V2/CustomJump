@@ -1,3 +1,9 @@
+# v1.0.8
+- Updated for Geode v5.0.0 stable.
+- Migrated metadata from beta.4 target to stable loader target.
+- Removed beta-only migration labels from source comments.
+- Revalidated custom jump input flow for gameplay and editor playtest on GD 2.2081.
+
 # v1.0.7
 - Updated for Geode v5.0.0-beta.4.
 - Updated metadata for beta.4 compatibility (`requires-patching`, full platform targets).
