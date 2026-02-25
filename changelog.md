@@ -1,3 +1,9 @@
+# v1.0.9
+- Updated Geode target version to v5.0.1.
+- Fixed intermittent custom input registration issues during gameplay.
+- Fixed custom input not registering in editor playtest.
+- Improved key/mouse press-release handling to prevent missed input transitions.
+
 # v1.0.8
 - Updated for Geode v5.0.0 stable.
 - Migrated metadata from beta.4 target to stable loader target.

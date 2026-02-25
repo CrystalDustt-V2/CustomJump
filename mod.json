@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0",
+	"geode": "5.0.1",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "crystaldust.customjump",
 	"name": "CustomJump",
-	"version": "v1.0.8",
+	"version": "v1.0.9",
 	"requires-patching": true,
 	"developer": "CrystalDust",
 	"description": "Remap jump input to any keyboard key.",
