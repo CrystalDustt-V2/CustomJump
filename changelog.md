@@ -1,3 +1,8 @@
+# v1.1.0
+- Fixed remaining custom input registration gaps in editor playtest.
+- Improved editor playtest state tracking using playtest start/stop lifecycle hooks.
+- Improved pause-state filtering during editor playtest input handling.
+
 # v1.0.9
 - Updated Geode target version to v5.0.1.
 - Fixed intermittent custom input registration issues during gameplay.

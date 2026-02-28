@@ -8,7 +8,7 @@
 	},
 	"id": "crystaldust.customjump",
 	"name": "CustomJump",
-	"version": "v1.0.9",
+	"version": "v1.1.0",
 	"requires-patching": true,
 	"developer": "CrystalDust",
 	"description": "Remap jump input to any keyboard key.",

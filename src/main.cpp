@@ -323,6 +323,7 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
     std::vector<Keybind> heldJumpBindsP2;
     bool appliedJumpDownP1 = false;
     bool appliedJumpDownP2 = false;
+    bool playtestActive = false;
   };
 
   bool init(GJGameLevel* level, bool noUI) {
@@ -450,16 +451,28 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
     this->processCustomJumpState();
   }
 
+  void onPlaytest() {
+    m_fields->playtestActive = true;
+    LevelEditorLayer::onPlaytest();
+  }
+
+  void onStopPlaytest() {
+    m_fields->playtestActive = false;
+    LevelEditorLayer::onStopPlaytest();
+  }
+
   bool isEditorPlaytestPaused() {
     auto scene = CCScene::get();
     if (!scene) {
       return false;
     }
-    return scene->getChildByType<EditorPauseLayer>(0) != nullptr;
+    auto pauseLayer = scene->getChildByType<EditorPauseLayer>(0);
+    return pauseLayer && pauseLayer->isVisible();
   }
 
   bool isCustomJumpContextValid(PlayerObject* player) {
-    if (!this->m_playbackActive || this->isEditorPlaytestPaused()) {
+    bool const isPlaytestActive = m_fields->playtestActive || this->m_playbackActive;
+    if (!isPlaytestActive || this->isEditorPlaytestPaused()) {
       return false;
     }
     if (!player || player->m_isDead) {
@@ -472,8 +485,9 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
     bool p2Enabled = customjump::isPlayer2CustomEnabled();
     auto const bindsP1 = customjump::getJumpBindsP1();
     auto const bindsP2 = customjump::getJumpBindsP2(p2Enabled);
+    bool const isPlaytestActive = m_fields->playtestActive || this->m_playbackActive;
 
-    if (!this->m_playbackActive) {
+    if (!isPlaytestActive) {
       m_fields->heldJumpBindsP1.clear();
       m_fields->heldJumpBindsP2.clear();
     }
