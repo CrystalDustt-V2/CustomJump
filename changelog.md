@@ -1,3 +1,7 @@
+# v1.1.2
+- Fixed CustomJump raw input listeners always propagating so other mods' keybinds are no longer canceled.
+- Prevented CustomJump from blocking unrelated gameplay and utility inputs while custom jump is held.
+
 # v1.1.1
 - Updated Geode target version to v5.3.0.
 - Removed CustomJump's use of the shared keybind-setting event pipeline.

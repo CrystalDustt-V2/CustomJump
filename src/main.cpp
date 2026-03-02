@@ -157,7 +157,6 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
-            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
@@ -188,7 +187,6 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
-            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
@@ -292,7 +290,6 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
-            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
@@ -323,7 +320,6 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
-            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
