@@ -1,3 +1,8 @@
+# v1.1.3
+- Added generic filtering for unsupported modifier-only custom jump binds.
+- Prevented CustomJump from using Shift, Ctrl, Alt, or Windows keys as standalone jump inputs.
+- Avoided modifier-state conflicts that can break unrelated Geode keybinds while custom jump is held.
+
 # v1.1.2
 - Fixed CustomJump raw input listeners always propagating so other mods' keybinds are no longer canceled.
 - Prevented CustomJump from blocking unrelated gameplay and utility inputs while custom jump is held.

@@ -14,7 +14,7 @@ static constexpr char const* kJumpKeyP1Setting = "jump-key";
 static constexpr char const* kJumpKeyP2Setting = "jump-key-p2";
 static constexpr char const* kEnableJumpKeyP2Setting = "enable-jump-key-p2";
 static constexpr char const* kStopPropagationSetting = "stop-keybind-propagation";
-static constexpr int kKeybindListenerPriority = 0;
+static constexpr int kKeybindListenerPriority = -100;
 
 bool isPlayer2CustomEnabled() {
   auto mod = Mod::get();
@@ -51,6 +51,73 @@ bool shouldStopKeybindPropagation() {
 bool keybindListenerResult() {
   return shouldStopKeybindPropagation() ? ListenerResult::Stop
                                         : ListenerResult::Propagate;
+}
+
+uint8_t modifierMaskForPhysicalKey(cocos2d::enumKeyCodes key) {
+  using cocos2d::enumKeyCodes;
+
+  switch (key) {
+    case enumKeyCodes::KEY_Shift:
+    case enumKeyCodes::KEY_LeftShift:
+    case enumKeyCodes::KEY_RightShift:
+      return KeyboardModifier::Shift;
+
+    case enumKeyCodes::KEY_Control:
+    case enumKeyCodes::KEY_LeftControl:
+    case enumKeyCodes::KEY_RightContol:
+      return KeyboardModifier::Control;
+
+    case enumKeyCodes::KEY_Alt:
+    case enumKeyCodes::KEY_LeftMenu:
+    case enumKeyCodes::KEY_RightMenu:
+      return KeyboardModifier::Alt;
+
+    case enumKeyCodes::KEY_LeftWindowsKey:
+    case enumKeyCodes::KEY_RightWindowsKey:
+      return KeyboardModifier::Super;
+
+    default:
+      return KeyboardModifier::None;
+  }
+}
+
+uint8_t getConsumedModifierMask(std::vector<Keybind> const& heldBindsP1,
+                                std::vector<Keybind> const& heldBindsP2) {
+  uint8_t mask = KeyboardModifier::None;
+
+  for (auto const& bind : heldBindsP1) {
+    mask |= modifierMaskForPhysicalKey(bind.key);
+  }
+  for (auto const& bind : heldBindsP2) {
+    mask |= modifierMaskForPhysicalKey(bind.key);
+  }
+
+  return mask;
+}
+
+void stripConsumedModifiers(KeyboardModifier& modifiers, uint8_t consumedMask) {
+  if (consumedMask == KeyboardModifier::None) {
+    return;
+  }
+  modifiers = KeyboardModifier(modifiers.value & ~consumedMask);
+}
+
+void stripConsumedModifiersForDownstream(
+    KeyboardInputData& data, std::vector<Keybind> const& heldBindsP1,
+    std::vector<Keybind> const& heldBindsP2) {
+  if (modifierMaskForPhysicalKey(data.key) != KeyboardModifier::None) {
+    return;
+  }
+
+  stripConsumedModifiers(
+      data.modifiers, getConsumedModifierMask(heldBindsP1, heldBindsP2));
+}
+
+void stripConsumedModifiersForDownstream(
+    MouseInputData& data, std::vector<Keybind> const& heldBindsP1,
+    std::vector<Keybind> const& heldBindsP2) {
+  stripConsumedModifiers(
+      data.modifiers, getConsumedModifierMask(heldBindsP1, heldBindsP2));
 }
 
 bool addHeldBind(std::vector<Keybind>& heldBinds, Keybind const& keybind) {
@@ -138,22 +205,26 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
         "customjump-raw-key-release-play",
         KeyboardInputEvent(),
         [this](KeyboardInputData& data) {
+          auto const inputModifiers = data.modifiers;
           bool down = data.action != KeyboardInputData::Action::Release;
           bool repeat = data.action == KeyboardInputData::Action::Repeat;
 
           bool changed = false;
           auto const bindsP1 = customjump::getJumpBindsP1();
           changed |= customjump::updateHeldBindsForRawInput(
-              data.key, data.modifiers, down, repeat, bindsP1,
+              data.key, inputModifiers, down, repeat, bindsP1,
               m_fields->heldJumpBindsP1);
 
           bool p2Enabled = customjump::isPlayer2CustomEnabled();
           auto const bindsP2 = customjump::getJumpBindsP2(p2Enabled);
           if (p2Enabled) {
             changed |= customjump::updateHeldBindsForRawInput(
-                data.key, data.modifiers, down, repeat, bindsP2,
+                data.key, inputModifiers, down, repeat, bindsP2,
                 m_fields->heldJumpBindsP2);
           }
+
+          customjump::stripConsumedModifiersForDownstream(
+              data, m_fields->heldJumpBindsP1, m_fields->heldJumpBindsP2);
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
@@ -170,20 +241,24 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
           if (key == cocos2d::enumKeyCodes::KEY_None) {
             return ListenerResult::Propagate;
           }
+          auto const inputModifiers = data.modifiers;
           bool down = data.action == MouseInputData::Action::Press;
 
           bool changed = false;
           auto const bindsP1 = customjump::getJumpBindsP1();
           changed |= customjump::updateHeldBindsForRawInput(
-              key, data.modifiers, down, false, bindsP1, m_fields->heldJumpBindsP1);
+              key, inputModifiers, down, false, bindsP1, m_fields->heldJumpBindsP1);
 
           bool p2Enabled = customjump::isPlayer2CustomEnabled();
           auto const bindsP2 = customjump::getJumpBindsP2(p2Enabled);
           if (p2Enabled) {
             changed |= customjump::updateHeldBindsForRawInput(
-                key, data.modifiers, down, false, bindsP2,
+                key, inputModifiers, down, false, bindsP2,
                 m_fields->heldJumpBindsP2);
           }
+
+          customjump::stripConsumedModifiersForDownstream(
+              data, m_fields->heldJumpBindsP1, m_fields->heldJumpBindsP2);
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
@@ -271,22 +346,26 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
         "customjump-raw-key-release-editor",
         KeyboardInputEvent(),
         [this](KeyboardInputData& data) {
+          auto const inputModifiers = data.modifiers;
           bool down = data.action != KeyboardInputData::Action::Release;
           bool repeat = data.action == KeyboardInputData::Action::Repeat;
 
           bool changed = false;
           auto const bindsP1 = customjump::getJumpBindsP1();
           changed |= customjump::updateHeldBindsForRawInput(
-              data.key, data.modifiers, down, repeat, bindsP1,
+              data.key, inputModifiers, down, repeat, bindsP1,
               m_fields->heldJumpBindsP1);
 
           bool p2Enabled = customjump::isPlayer2CustomEnabled();
           auto const bindsP2 = customjump::getJumpBindsP2(p2Enabled);
           if (p2Enabled) {
             changed |= customjump::updateHeldBindsForRawInput(
-                data.key, data.modifiers, down, repeat, bindsP2,
+                data.key, inputModifiers, down, repeat, bindsP2,
                 m_fields->heldJumpBindsP2);
           }
+
+          customjump::stripConsumedModifiersForDownstream(
+              data, m_fields->heldJumpBindsP1, m_fields->heldJumpBindsP2);
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
@@ -303,20 +382,24 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
           if (key == cocos2d::enumKeyCodes::KEY_None) {
             return ListenerResult::Propagate;
           }
+          auto const inputModifiers = data.modifiers;
           bool down = data.action == MouseInputData::Action::Press;
 
           bool changed = false;
           auto const bindsP1 = customjump::getJumpBindsP1();
           changed |= customjump::updateHeldBindsForRawInput(
-              key, data.modifiers, down, false, bindsP1, m_fields->heldJumpBindsP1);
+              key, inputModifiers, down, false, bindsP1, m_fields->heldJumpBindsP1);
 
           bool p2Enabled = customjump::isPlayer2CustomEnabled();
           auto const bindsP2 = customjump::getJumpBindsP2(p2Enabled);
           if (p2Enabled) {
             changed |= customjump::updateHeldBindsForRawInput(
-                key, data.modifiers, down, false, bindsP2,
+                key, inputModifiers, down, false, bindsP2,
                 m_fields->heldJumpBindsP2);
           }
+
+          customjump::stripConsumedModifiersForDownstream(
+              data, m_fields->heldJumpBindsP1, m_fields->heldJumpBindsP2);
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
