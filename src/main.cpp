@@ -68,21 +68,6 @@ bool removeHeldBindsByKey(std::vector<Keybind>& heldBinds,
   return heldBinds.size() != before;
 }
 
-bool updateHeldBindsForKeybindEvent(Keybind const& keybind, bool down, bool repeat,
-                                    std::vector<Keybind> const& configuredBinds,
-                                    std::vector<Keybind>& heldBinds) {
-  if (configuredBinds.empty() || repeat) {
-    return false;
-  }
-  if (!down) {
-    return removeHeldBindsByKey(heldBinds, keybind.key);
-  }
-  if (!std::ranges::contains(configuredBinds, keybind)) {
-    return false;
-  }
-  return addHeldBind(heldBinds, keybind);
-}
-
 bool keybindMatchesRawInput(Keybind const& configuredBind, cocos2d::enumKeyCodes key,
                             KeyboardModifier inputModifiers) {
   if (configuredBind.key != key) {
@@ -149,55 +134,6 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
       return false;
     }
 
-    // [Geode v5.0.0 Stable Migration]
-    this->addEventListener(
-        "customjump-p1-play",
-        KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP1Setting),
-        [this](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-          auto const bindsP1 = customjump::getJumpBindsP1();
-          if (bindsP1.empty()) {
-            m_fields->heldJumpBindsP1.clear();
-            return ListenerResult::Propagate;
-          }
-
-          bool matched = customjump::updateHeldBindsForKeybindEvent(
-              keybind, down, repeat, bindsP1, m_fields->heldJumpBindsP1);
-          if (!matched) {
-            return ListenerResult::Propagate;
-          }
-
-          this->processCustomJumpState(timestamp);
-          return customjump::keybindListenerResult();
-        },
-        customjump::kKeybindListenerPriority);
-
-    // [Geode v5.0.0 Stable Migration]
-    this->addEventListener(
-        "customjump-p2-play",
-        KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP2Setting),
-        [this](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-          if (!customjump::isPlayer2CustomEnabled()) {
-            m_fields->heldJumpBindsP2.clear();
-            return ListenerResult::Propagate;
-          }
-
-          auto const bindsP2 = customjump::getJumpBindsP2(true);
-          if (bindsP2.empty()) {
-            m_fields->heldJumpBindsP2.clear();
-            return ListenerResult::Propagate;
-          }
-
-          bool matched = customjump::updateHeldBindsForKeybindEvent(
-              keybind, down, repeat, bindsP2, m_fields->heldJumpBindsP2);
-          if (!matched) {
-            return ListenerResult::Propagate;
-          }
-
-          this->processCustomJumpState(timestamp);
-          return customjump::keybindListenerResult();
-        },
-        customjump::kKeybindListenerPriority);
-
     this->addEventListener(
         "customjump-raw-key-release-play",
         KeyboardInputEvent(),
@@ -221,6 +157,7 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
+            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
@@ -251,6 +188,7 @@ class $modify(CustomJumpPlayLayer, PlayLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
+            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
@@ -331,55 +269,6 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
       return false;
     }
 
-    // [Geode v5.0.0 Stable Migration]
-    this->addEventListener(
-        "customjump-p1-editor",
-        KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP1Setting),
-        [this](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-          auto const bindsP1 = customjump::getJumpBindsP1();
-          if (bindsP1.empty()) {
-            m_fields->heldJumpBindsP1.clear();
-            return ListenerResult::Propagate;
-          }
-
-          bool matched = customjump::updateHeldBindsForKeybindEvent(
-              keybind, down, repeat, bindsP1, m_fields->heldJumpBindsP1);
-          if (!matched) {
-            return ListenerResult::Propagate;
-          }
-
-          this->processCustomJumpState(timestamp);
-          return customjump::keybindListenerResult();
-        },
-        customjump::kKeybindListenerPriority);
-
-    // [Geode v5.0.0 Stable Migration]
-    this->addEventListener(
-        "customjump-p2-editor",
-        KeybindSettingPressedEventV3(Mod::get(), customjump::kJumpKeyP2Setting),
-        [this](Keybind const& keybind, bool down, bool repeat, double timestamp) {
-          if (!customjump::isPlayer2CustomEnabled()) {
-            m_fields->heldJumpBindsP2.clear();
-            return ListenerResult::Propagate;
-          }
-
-          auto const bindsP2 = customjump::getJumpBindsP2(true);
-          if (bindsP2.empty()) {
-            m_fields->heldJumpBindsP2.clear();
-            return ListenerResult::Propagate;
-          }
-
-          bool matched = customjump::updateHeldBindsForKeybindEvent(
-              keybind, down, repeat, bindsP2, m_fields->heldJumpBindsP2);
-          if (!matched) {
-            return ListenerResult::Propagate;
-          }
-
-          this->processCustomJumpState(timestamp);
-          return customjump::keybindListenerResult();
-        },
-        customjump::kKeybindListenerPriority);
-
     this->addEventListener(
         "customjump-raw-key-release-editor",
         KeyboardInputEvent(),
@@ -403,6 +292,7 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
+            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },
@@ -433,6 +323,7 @@ class $modify(CustomJumpLevelEditorLayer, LevelEditorLayer) {
 
           if (changed) {
             this->processCustomJumpState(data.timestamp);
+            return customjump::keybindListenerResult();
           }
           return ListenerResult::Propagate;
         },

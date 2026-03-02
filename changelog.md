@@ -1,3 +1,9 @@
+# v1.1.1
+- Updated Geode target version to v5.3.0.
+- Removed CustomJump's use of the shared keybind-setting event pipeline.
+- Switched CustomJump input handling to raw Geode keyboard and mouse input events only.
+- Fixed CustomJump interfering with other mods' keybinds while a custom jump input is held.
+
 # v1.1.0
 - Fixed remaining custom input registration gaps in editor playtest.
 - Improved editor playtest state tracking using playtest start/stop lifecycle hooks.
